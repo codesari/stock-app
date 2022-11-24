@@ -10,7 +10,7 @@ import StoreIcon from "@mui/icons-material/Store";
 import StarsIcon from "@mui/icons-material/Stars";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 //* sol menüdeki her element icin bir obje olusturduk.
 //? iconu,linki ve title 'ı var
@@ -49,20 +49,33 @@ const icons = [
   {
     title: "Admin Panel",
     icon: <SupervisorAccountIcon />,
-    url: "https://10001.fullstack.clarusway.com/admin",
+    url: "https://14268.fullstack.clarusway.com/admin",
   },
 ];
+//* yukaridaki url ler 2 çeşit.dahili url (relative path) lerde problem olmuyor direk url devaminda anlamli bir url yolu oluyor.
+//? harici url ler de (absolute path old.icin problem olusturuyor)
+//? harici linkler icin navigate kullanilamaz.navigate dahili calisir.onun yerine link to veya navlink to kullanmak gerekiyor
 
 const MenuListItems = () => {
+  const navigate = useNavigate();
+
   return (
     <List>
       {/* id olsaydi index'e gerek yoktu */}
       {icons?.map((item, index) => (
         <ListItem key={index} disablePadding>
-          <ListItemButton>
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.title} />
-          </ListItemButton>
+          {item.url.includes("http") && (
+            <ListItemButton to={item.url}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.title} />
+            </ListItemButton>
+          )}
+          {!item.url.includes("http") && (
+            <ListItemButton onClick={() => navigate(item.url)}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.title} />
+            </ListItemButton>
+          )}
         </ListItem>
       ))}
     </List>
