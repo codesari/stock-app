@@ -17,6 +17,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import MenuListItems from "../components/MenuListItems";
+import { blueGrey } from "@mui/material/colors";
 
 const drawerWidth = 240;
 
@@ -70,6 +71,7 @@ function Dashboard(props) {
         aria-label="mailbox folders"
       >
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        {/* 2 tane Drawer componenti var.responsive old.icin acildigi ve kapandigi andaki durumlarini temsil ediyor */}
         <Drawer
           container={container}
           variant="temporary"
@@ -85,6 +87,12 @@ function Dashboard(props) {
               width: drawerWidth,
             },
           }}
+          //* sol menünün bgcolor'ı sx'ten degistiremiyoruz.bunun yerine paper props diye bir propertiesten degistiriyoruz
+          PaperProps={{
+            sx: {
+              backgroundColor: "#005E54",
+            },
+          }}
         >
           {drawer}
         </Drawer>
@@ -95,6 +103,11 @@ function Dashboard(props) {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
+            },
+          }}
+          PaperProps={{
+            sx: {
+              backgroundColor: "#005E54",
             },
           }}
           open
