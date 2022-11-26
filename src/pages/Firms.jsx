@@ -1,36 +1,71 @@
+// import { Box, Typography } from "@mui/material";
+// tek tek ilgili yerden cagirmak performans acisindan daha iyi
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 import axios from "axios";
+import { useEffect } from "react";
+import useStockCall from "../hooks/useStockCall";
 import { useSelector } from "react-redux";
-import { fetchFail, fetchStart, getSuccess } from "../features/stockSlice";
+import FirmCard from "../components/FirmCard";
+
+// import { useEffect } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { fetchFail, fetchStart, getSuccess } from "../features/stockSlice";
 
 const Firms = () => {
-  //* state'ler yukarida tanimlanmali
-  const { token } = useSelector((state) => state.auth);
-  const BASE_URL = "https://14268.fullstack.clarusway.com/";
+  const { getFirms } = useStockCall();
+  const { firms } = useSelector((state) => state.stock);
+  // firma bilgilerini useSElector ile state'den okuduk
 
-  //? gelen veriyi state lere aktarmam lazim.bunun icin dispatch kullaniyorum
-  const dispatch = useDispatch();
+  //! hook cagirdigimiz icin bu kodlara ihtiyac kalmadi.yukarida custom hook dan cagirdigimiz kodlari kullanacagiz.
 
-  const getFirms = async () => {
-    const url = "firms";
-    dispatch(fetchStart());
-    try {
-      const { data } = await axios.get(`${BASE_URL}stock/firms/`, {
-        headers: { Authorization: `Token ${token}` },
-      });
-      console.log(data);
-      // dispatch(getSuccess({data,"firms"}))
-      // yukaridaki sekilde firms kabul etmiyor obje formati istiyor.bu yüzden firm ü url degiskeni olarak veriyoruz.
-      dispatch(getSuccess({ data, url }));
-    } catch (error) {
-      console.log(error);
-      dispatch(fetchFail());
-    }
-  };
+  // //* state'ler yukarida tanimlanmali
+  // const { token } = useSelector((state) => state.auth);
+  // const BASE_URL = "https://14268.fullstack.clarusway.com/";
+
+  // //? gelen veriyi state lere aktarmam lazim.bunun icin dispatch kullaniyorum
+  // const dispatch = useDispatch();
+
+  // const getFirms = async () => {
+  //   const url = "firms";
+  //   dispatch(fetchStart());
+  //   try {
+  //     const { data } = await axios.get(`${BASE_URL}stock/firms/`, {
+  //       headers: { Authorization: `Token ${token}` },
+  //     });
+  //     console.log(data);
+  //     // dispatch(getSuccess({data,"firms"}))
+  //     // yukaridaki sekilde firms kabul etmiyor obje formati istiyor.bu yüzden firm ü url degiskeni olarak veriyoruz.
+  //     dispatch(getSuccess({ data, url }));
+  //   } catch (error) {
+  //     console.log(error);
+  //     dispatch(fetchFail());
+  //   }
+  // };
   useEffect(() => {
     getFirms();
+    console.log(firms);
   }, []);
 
-  return <div>Firms</div>;
+  return (
+    <Box>
+      <Typography variant="h4" color="error" mb={1}>
+        Firms
+      </Typography>
+      <Button variant="contained">New Firm</Button>
+      {firms?.length > 0 && (
+        <Grid container justifyContent="center" gap={3}>
+          {firms?.map((firm) => (
+            <Grid item>
+              <FirmCard key={firm.id} firm={firm} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Box>
+  );
 };
 
 export default Firms;
