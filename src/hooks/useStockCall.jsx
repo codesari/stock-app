@@ -1,9 +1,12 @@
-import { axiosWithToken } from "../service/axiosInstance";
+// import { axiosWithToken } from "../service/axiosInstance";
+// yukaridaki import u iptal ettik.çünkü axiosToken icin artik bir hook yazdık,token hook'tan gelecek service klasöründen değil
 import { useDispatch } from "react-redux";
 import { fetchFail, fetchStart, getSuccess } from "../features/stockSlice";
+import useAxios from "./useAxios";
 
 const useStockCall = () => {
   const dispatch = useDispatch();
+  const { axiosWithToken } = useAxios();
 
   const getStockData = async (url) => {
     dispatch(fetchStart());
