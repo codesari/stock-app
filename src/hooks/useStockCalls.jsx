@@ -2,11 +2,14 @@
 // yukaridaki import u iptal ettik.çünkü axiosToken icin artik bir hook yazdık,token hook'tan gelecek service klasöründen değil
 import { useDispatch } from "react-redux";
 import { fetchFail, fetchStart, getSuccess } from "../features/stockSlice";
+import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify";
 import useAxios from "./useAxios";
 
-const useStockCall = () => {
+const useStockCalls = () => {
   const dispatch = useDispatch();
   const { axiosWithToken } = useAxios();
+
+  //! ------------ GET CALLS -------------
 
   const getStockData = async (url) => {
     dispatch(fetchStart());
@@ -21,10 +24,38 @@ const useStockCall = () => {
   const getFirms = () => getStockData("firms");
   const getSales = () => getStockData("sales");
 
-  return { getFirms, getSales };
+  //! ----------- DELETE CALLS ---------------
+
+  const deleteStockData = async (url, id) => {
+    try {
+      await axiosWithToken.delete(`stock/${url}/${id}/`);
+      toastSuccessNotify(`${url} deleted successfully`);
+      getStockData(url);
+    } catch (error) {
+      console.log(error);
+      toastErrorNotify(`${url} can not be deleted`);
+    }
+  };
+
+  const deleteFirm = (id) => deleteStockData("firms", id);
+
+  //! ----------- POST CALLS ---------------
+  const postStockData = async (url) => {
+    try {
+      await axiosWithToken.post(`stock/firms/`);
+      toastSuccessNotify(`firm added successfully`);
+      getStockData(url);
+    } catch (error) {
+      console.log(error);
+      toastErrorNotify(`firm can not be added`);
+    }
+  };
+  const postFirm = () => postStockData();
+
+  return { getStockData, getFirms, getSales, deleteFirm, postFirm };
 };
 
-export default useStockCall;
+export default useStockCalls;
 
 // const getFirms = async () => {
 //   const url = "firms";

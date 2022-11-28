@@ -8,15 +8,27 @@ import Typography from "@mui/material/Typography";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import { btnHoverStyle } from "../styles/globalStyle";
+import useStockCalls from "../hooks/useStockCalls";
 
 export default function FirmCard({ firm }) {
+  const { deleteFirm } = useStockCalls();
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card
+      sx={{
+        p: 2,
+        maxWidth: "300px",
+        maxHeight: "400px",
+        minHeight: "400px",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <CardMedia
         component="img"
         height="140"
         image={firm?.image}
         alt="firm-image"
+        sx={{ p: 1, objectFit: "contain" }}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
@@ -28,7 +40,10 @@ export default function FirmCard({ firm }) {
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center" }}>
         <EditIcon sx={() => btnHoverStyle("green")} />
-        <DeleteOutlineIcon sx={() => btnHoverStyle("red")} />
+        <DeleteOutlineIcon
+          sx={() => btnHoverStyle("red")}
+          onClick={() => deleteFirm(firm?.id)}
+        />
       </CardActions>
     </Card>
   );

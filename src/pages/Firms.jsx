@@ -4,11 +4,13 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import axios from "axios";
+
 import { useEffect } from "react";
-import useStockCall from "../hooks/useStockCall";
+import useStockCall from "../hooks/useStockCalls";
 import { useSelector } from "react-redux";
 import FirmCard from "../components/FirmCard";
+import NewFirmModal from "../components/modals/NewFirmModal";
+import { useState } from "react";
 
 // import { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +19,14 @@ import FirmCard from "../components/FirmCard";
 const Firms = () => {
   const { getFirms } = useStockCall();
   const { firms } = useSelector((state) => state.stock);
-  // firma bilgilerini useSElector ile state'den okuduk
+  // firma bilgilerini useSelector ile state'den okuduk
+  const [open, setOpen] = useState(false);
+  const [info, setInfo] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    image: "",
+  });
 
   //! hook cagirdigimiz icin bu kodlara ihtiyac kalmadi.yukarida custom hook dan cagirdigimiz kodlari kullanacagiz.
 
@@ -54,12 +63,21 @@ const Firms = () => {
       <Typography variant="h4" color="error" mb={1}>
         Firms
       </Typography>
-      <Button variant="contained">New Firm</Button>
+      <Button variant="contained" onClick={() => setOpen(true)}>
+        New Firm
+      </Button>
+
+      <NewFirmModal
+        open={open}
+        setOpen={setOpen}
+        info={info}
+        setInfo={setInfo}
+      />
       {firms?.length > 0 && (
         <Grid container justifyContent="center" gap={3}>
           {firms?.map((firm) => (
-            <Grid item>
-              <FirmCard key={firm.id} firm={firm} />
+            <Grid item key={firm.id}>
+              <FirmCard firm={firm} />
             </Grid>
           ))}
         </Grid>
