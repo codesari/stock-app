@@ -21,12 +21,7 @@ const Firms = () => {
   const { firms } = useSelector((state) => state.stock);
   // firma bilgilerini useSelector ile state'den okuduk
   const [open, setOpen] = useState(false);
-  const [info, setInfo] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    image: "",
-  });
+  const [info, setInfo] = useState({});
 
   //! hook cagirdigimiz icin bu kodlara ihtiyac kalmadi.yukarida custom hook dan cagirdigimiz kodlari kullanacagiz.
 
@@ -77,7 +72,7 @@ const Firms = () => {
         <Grid container justifyContent="center" gap={3}>
           {firms?.map((firm) => (
             <Grid item key={firm.id}>
-              <FirmCard firm={firm} />
+              <FirmCard firm={firm} setOpen={setOpen} setInfo={setInfo} />
             </Grid>
           ))}
         </Grid>

@@ -5,10 +5,18 @@ import Modal from "@mui/material/Modal";
 import { flexCenter, modalStyle } from "../../styles/globalStyle";
 
 import { TextField, Typography } from "@mui/material";
+import useStockCalls from "../../hooks/useStockCalls";
 
 export default function NewFirmModal({ open, setOpen, info, setInfo }) {
+  // post islemi icin post hook unu useStockCalls'dan cagiriyoruz.
+  const { postFirm } = useStockCalls();
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    postFirm(info);
+    setOpen(false);
+    // state'leri sıfırlamak icin
+    setInfo({});
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
