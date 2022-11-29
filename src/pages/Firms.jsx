@@ -22,6 +22,7 @@ const Firms = () => {
   // firma bilgilerini useSelector ile state'den okuduk
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
+  const [btnName, setBtnName] = useState("Add New Firm");
 
   //! hook cagirdigimiz icin bu kodlara ihtiyac kalmadi.yukarida custom hook dan cagirdigimiz kodlari kullanacagiz.
 
@@ -58,7 +59,14 @@ const Firms = () => {
       <Typography variant="h4" color="error" mb={1}>
         Firms
       </Typography>
-      <Button variant="contained" onClick={() => setOpen(true)}>
+      <Button
+        variant="contained"
+        onClick={() => {
+          setOpen(true);
+          setInfo({});
+          setBtnName("Add New Firm");
+        }}
+      >
         New Firm
       </Button>
 
@@ -67,12 +75,20 @@ const Firms = () => {
         setOpen={setOpen}
         info={info}
         setInfo={setInfo}
+        btnName={btnName}
+        setBtnName={setBtnName}
       />
       {firms?.length > 0 && (
         <Grid container justifyContent="center" gap={3}>
           {firms?.map((firm) => (
             <Grid item key={firm.id}>
-              <FirmCard firm={firm} setOpen={setOpen} setInfo={setInfo} />
+              <FirmCard
+                firm={firm}
+                setOpen={setOpen}
+                setInfo={setInfo}
+                btnName={btnName}
+                setBtnName={setBtnName}
+              />
             </Grid>
           ))}
         </Grid>

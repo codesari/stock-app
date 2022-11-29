@@ -3,17 +3,29 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import { flexCenter, modalStyle } from "../../styles/globalStyle";
-
 import { TextField, Typography } from "@mui/material";
 import useStockCalls from "../../hooks/useStockCalls";
+import { useState } from "react";
 
-export default function NewFirmModal({ open, setOpen, info, setInfo }) {
+export default function NewFirmModal({
+  open,
+  setOpen,
+  info,
+  setInfo,
+  btnName,
+  setBtnName,
+}) {
   // post islemi icin post hook unu useStockCalls'dan cagiriyoruz.
   const { postFirm } = useStockCalls();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    postFirm(info);
+    if (info.id) {
+      // putFirm(info);
+    } else {
+      postFirm(info);
+    }
+
     setOpen(false);
     // state'leri sıfırlamak icin
     setInfo({});
@@ -35,7 +47,7 @@ export default function NewFirmModal({ open, setOpen, info, setInfo }) {
           {/* component propertisine form denildiği zaman Box elementi form elementi gibi davranır */}
           <Box component="form" onSubmit={handleSubmit} sx={flexCenter}>
             <Typography variant="h5" color="error" mb={1}>
-              Add Firms
+              {btnName}
             </Typography>
 
             <TextField
@@ -78,7 +90,7 @@ export default function NewFirmModal({ open, setOpen, info, setInfo }) {
               required
             />
             <Button type="submit" variant="contained">
-              Add Firm
+              {btnName}
             </Button>
           </Box>
         </Box>

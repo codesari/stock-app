@@ -3,14 +3,19 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import { btnHoverStyle } from "../styles/globalStyle";
 import useStockCalls from "../hooks/useStockCalls";
 
-export default function FirmCard({ firm, setInfo }) {
+export default function FirmCard({
+  firm,
+  setInfo,
+  setOpen,
+  btnName,
+  setBtnName,
+}) {
   const { deleteFirm } = useStockCalls();
   return (
     <Card
@@ -41,7 +46,11 @@ export default function FirmCard({ firm, setInfo }) {
       <CardActions sx={{ display: "flex", justifyContent: "center" }}>
         <EditIcon
           sx={() => btnHoverStyle("green")}
-          onClick={() => editFirm(info)}
+          onClick={() => {
+            setOpen(true);
+            setInfo(firm);
+            setBtnName("Update Firm");
+          }}
         />
         <DeleteOutlineIcon
           sx={() => btnHoverStyle("red")}
