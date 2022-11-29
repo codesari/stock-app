@@ -14,7 +14,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { btnHoverStyle } from "../styles/globalStyle";
+import { arrowStyle, btnHoverStyle, flex } from "../styles/globalStyle";
+import UpgradeIcon from "@mui/icons-material/Upgrade";
+import VerticalAlignBottomIcon from "@mui/icons-material/VerticalAlignBottom";
 
 const Products = () => {
   const { getBrands, getCategories, getProducts } = useStockCall();
@@ -22,6 +24,18 @@ const Products = () => {
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
   const [btnName, setBtnName] = useState("Add New Firm");
+
+  const [toggle, setToggle] = useState({
+    brand: false,
+    name: false,
+    stock: 1,
+  });
+  const handleSortNumber = (arg) => {
+    setToggle({ ...toggle, [arg]: toggle[arg] * -1 });
+    // state obje biciminde old.icin icindeki bir veriyi degistirmek icin önce objeyi acmamiz gerekiyor.
+    // toggle.arg yazsaydık arg bir değişken oldugu icin hata verirdi obje icinde arg diye bir key arardı.
+    // arg bir değişken old.icin toggle[arg] seklinde yazıyoruz
+  };
 
   useEffect(() => {
     getBrands();
@@ -54,9 +68,28 @@ const Products = () => {
               <TableRow>
                 <TableCell align="center">#</TableCell>
                 <TableCell align="center">Category</TableCell>
-                <TableCell align="center">Brand</TableCell>
-                <TableCell align="center">Name</TableCell>
-                <TableCell align="center">Stock</TableCell>
+                <TableCell align="center" sx={() => btnHoverStyle("red")}>
+                  <Box sx={arrowStyle}>
+                    Brand {true && <UpgradeIcon />}
+                    {false && <VerticalAlignBottomIcon />}
+                  </Box>
+                </TableCell>
+                <TableCell align="center" sx={() => btnHoverStyle("red")}>
+                  <Box sx={arrowStyle}>
+                    Name {true && <UpgradeIcon />}
+                    {false && <VerticalAlignBottomIcon />}
+                  </Box>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={() => btnHoverStyle("red")}
+                  onClick={() => handleSortNumber("stock")}
+                >
+                  <Box sx={arrowStyle}>
+                    Stock {toggle.stock === 1 && <UpgradeIcon />}
+                    {toggle.stock !== 1 && <VerticalAlignBottomIcon />}
+                  </Box>
+                </TableCell>
                 <TableCell align="center">Operation</TableCell>
               </TableRow>
             </TableHead>
@@ -69,6 +102,7 @@ const Products = () => {
                   <TableCell align="center" component="th" scope="row">
                     {index + 1}
                   </TableCell>
+
                   <TableCell align="center">{product.category}</TableCell>
                   <TableCell align="center">{product.brand}</TableCell>
                   <TableCell align="center">{product.name}</TableCell>

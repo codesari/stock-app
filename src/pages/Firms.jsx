@@ -64,7 +64,7 @@ const Firms = () => {
         onClick={() => {
           setOpen(true);
           setInfo({});
-          setBtnName("Add New Firm");
+          // setBtnName("Add New Firm");" 1"
         }}
       >
         New Firm

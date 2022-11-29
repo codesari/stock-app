@@ -7,7 +7,7 @@ import { TextField, Typography } from "@mui/material";
 import useStockCalls from "../../hooks/useStockCalls";
 import { useState } from "react";
 
-export default function NewFirmModal({
+export default function ProductModal({
   open,
   setOpen,
   info,

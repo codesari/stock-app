@@ -1,5 +1,6 @@
 //! best practice
 //* her tarafta kullanabilmek icin export yapiyorum
+
 export const btnHoverStyle = (color) => {
   const style = {
     cursor: "pointer",
@@ -25,4 +26,20 @@ export const flexCenter = {
   justifyContent: "center",
   flexDirection: "column",
   gap: 3,
+};
+export const flex = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: 2,
+};
+
+export const flexColumn = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 2,
+};
+export const arrowStyle = {
+  display: "flex",
+  justifyContent: "center",
 };
