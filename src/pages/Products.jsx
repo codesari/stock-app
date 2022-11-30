@@ -18,14 +18,17 @@ import { arrowStyle, btnHoverStyle, flex } from "../styles/globalStyle";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import VerticalAlignBottomIcon from "@mui/icons-material/VerticalAlignBottom";
 import useSortColumn from "../hooks/useSortColumn";
+import { MultiSelectBox, MultiSelectBoxItem } from "@tremor/react";
 
 const Products = () => {
   const { getBrands, getCategories, getProducts } = useStockCall();
-  const { products } = useSelector((state) => state.stock);
+  const { products, brands } = useSelector((state) => state.stock);
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
   const [btnName, setBtnName] = useState("Add New Firm");
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+
   useEffect(() => {
     getBrands();
     getCategories();
@@ -42,6 +45,9 @@ const Products = () => {
     products,
     columnObj
   );
+  const isBrandSelected = (item) =>
+    selectedBrands.includes(item.brand) || selectedBrands.length === 0;
+  //* secilen item varsa filtrele yoksa bos döndür
 
   //? Siralanacak local state (sutun verilerinin local state hali)
 
@@ -88,6 +94,8 @@ const Products = () => {
   //   );
   // };
 
+  console.log(selectedBrands);
+
   return (
     <Box>
       <Typography variant="h4" color="error" mb={1}>
@@ -104,7 +112,33 @@ const Products = () => {
         New Product
       </Button>
 
-      <ProductModal />
+      <MultiSelectBox
+        handleSelect={(item) => setSelectedBrands(item)}
+        placeholder="Select Brand"
+      >
+        {brands?.map((item) => (
+          <MultiSelectBoxItem
+            key={item.name}
+            value={item.name}
+            text={item.name}
+          />
+        ))}
+      </MultiSelectBox>
+
+      <MultiSelectBox
+        handleSelect={(item) => setSelectedBrands(item)}
+        placeholder="Select Product"
+      >
+        {brands?.map((item) => (
+          <MultiSelectBoxItem
+            key={item.name}
+            value={item.name}
+            text={item.name}
+          />
+        ))}
+      </MultiSelectBox>
+
+      {/* <ProductModal /> */}
       {sortedData?.length > 0 && (
         // elevation,3d görünümü veren güzel bir property
         <TableContainer component={Paper} sx={{ mt: 3 }} elevation={10}>
@@ -147,24 +181,26 @@ const Products = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedData?.map((product, index) => (
-                <TableRow
-                  key={product.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell align="center" component="th" scope="row">
-                    {index + 1}
-                  </TableCell>
+              {sortedData
+                ?.filter((item) => isBrandSelected(item))
+                .map((product, index) => (
+                  <TableRow
+                    key={product.name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell align="center" component="th" scope="row">
+                      {index + 1}
+                    </TableCell>
 
-                  <TableCell align="center">{product.category}</TableCell>
-                  <TableCell align="center">{product.brand}</TableCell>
-                  <TableCell align="center">{product.name}</TableCell>
-                  <TableCell align="center">{product.stock}</TableCell>
-                  <TableCell align="center">
-                    <DeleteIcon sx={() => btnHoverStyle("red")} />
-                  </TableCell>
-                </TableRow>
-              ))}
+                    <TableCell align="center">{product.category}</TableCell>
+                    <TableCell align="center">{product.brand}</TableCell>
+                    <TableCell align="center">{product.name}</TableCell>
+                    <TableCell align="center">{product.stock}</TableCell>
+                    <TableCell align="center">
+                      <DeleteIcon sx={() => btnHoverStyle("red")} />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
