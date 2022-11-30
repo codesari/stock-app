@@ -17,6 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { arrowStyle, btnHoverStyle, flex } from "../styles/globalStyle";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import VerticalAlignBottomIcon from "@mui/icons-material/VerticalAlignBottom";
+import useSortColumn from "../hooks/useSortColumn";
 
 const Products = () => {
   const { getBrands, getCategories, getProducts } = useStockCall();
@@ -24,24 +25,68 @@ const Products = () => {
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
   const [btnName, setBtnName] = useState("Add New Firm");
-
-  const [toggle, setToggle] = useState({
-    brand: false,
-    name: false,
-    stock: 1,
-  });
-  const handleSortNumber = (arg) => {
-    setToggle({ ...toggle, [arg]: toggle[arg] * -1 });
-    // state obje biciminde old.icin icindeki bir veriyi degistirmek icin önce objeyi acmamiz gerekiyor.
-    // toggle.arg yazsaydık arg bir değişken oldugu icin hata verirdi obje icinde arg diye bir key arardı.
-    // arg bir değişken old.icin toggle[arg] seklinde yazıyoruz
-  };
-
+  const [selectedProducts, setSelectedProducts] = useState([]);
   useEffect(() => {
     getBrands();
     getCategories();
     getProducts();
   }, []);
+
+  const columnObj = {
+    brand: 1,
+    name: 1,
+    stock: 1,
+  };
+
+  const { sortedData, handleSort, columns } = useSortColumn(
+    products,
+    columnObj
+  );
+
+  //? Siralanacak local state (sutun verilerinin local state hali)
+
+  // const [sortedProducts, setSortedProducts] = useState(products);
+
+  //! product state'i her guncellendiginde local state'i de guncelle
+  //! verileri sıralamak anlik birsey bu yüzden local ile sıralamak mantikli.sayfa yenilendiginde ilk sırasız hali görünsün.
+  //* products state i degistigi zaman products ın kullanıldıgı heryer render edilir bunu istemiyoruz bunun icin localstate kullandik
+  //? bu yüzden componentDidUpdate islemi yaptik
+
+  // useEffect(() => {
+  //   setSortedProducts(products);
+  // }, [products]);
+
+  //* useSortColumn'da kullanmak üzere bu stateleri düz bir obje haline getiriyorum
+  // const [toggle, setToggle] = useState({
+  //   brand: 1,
+  //   name: 1,
+  //   stock: 1,
+  // });
+
+  // //? Jenerik Sutun siralama fonksiyonu
+  // const handleSort = (arg, type) => {
+  //   setToggle({ ...toggle, [arg]: toggle[arg] * -1 });
+  //   // state obje biciminde old.icin icindeki bir veriyi degistirmek icin önce objeyi acmamiz gerekiyor.
+  //   // toggle.arg yazsaydık arg bir değişken oldugu icin hata verirdi obje icinde arg diye bir key arardı.
+  //   // arg bir değişken old.icin toggle[arg] seklinde yazıyoruz
+  //   setSortedProducts(
+  //     sortedProducts
+  //       ?.map((item) => item)
+  //       .sort((a, b) => {
+  //         if (type === "date") {
+  //           return toggle[arg] * (new Date(a[arg]) - new Date(b[arg]));
+  //         } else if (type === "number") {
+  //           return toggle[arg] * (a[arg] - b[arg]);
+  //         } else {
+  //           if (toggle[arg] === 1) {
+  //             return b[arg] > a[arg] ? 1 : b[arg] < a[arg] ? -1 : 0;
+  //           } else {
+  //             return a[arg] > b[arg] ? 1 : a[arg] < b[arg] ? -1 : 0;
+  //           }
+  //         }
+  //       })
+  //   );
+  // };
 
   return (
     <Box>
@@ -60,7 +105,7 @@ const Products = () => {
       </Button>
 
       <ProductModal />
-      {products?.length > 0 && (
+      {sortedData?.length > 0 && (
         // elevation,3d görünümü veren güzel bir property
         <TableContainer component={Paper} sx={{ mt: 3 }} elevation={10}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -68,33 +113,41 @@ const Products = () => {
               <TableRow>
                 <TableCell align="center">#</TableCell>
                 <TableCell align="center">Category</TableCell>
-                <TableCell align="center" sx={() => btnHoverStyle("red")}>
+                <TableCell
+                  align="center"
+                  sx={() => btnHoverStyle("red")}
+                  onClick={() => handleSort("brand", "text")}
+                >
                   <Box sx={arrowStyle}>
-                    Brand {true && <UpgradeIcon />}
-                    {false && <VerticalAlignBottomIcon />}
-                  </Box>
-                </TableCell>
-                <TableCell align="center" sx={() => btnHoverStyle("red")}>
-                  <Box sx={arrowStyle}>
-                    Name {true && <UpgradeIcon />}
-                    {false && <VerticalAlignBottomIcon />}
+                    Brand {columns.brand === 1 && <UpgradeIcon />}
+                    {columns.brand !== 1 && <VerticalAlignBottomIcon />}
                   </Box>
                 </TableCell>
                 <TableCell
                   align="center"
                   sx={() => btnHoverStyle("red")}
-                  onClick={() => handleSortNumber("stock")}
+                  onClick={() => handleSort("name", "text")}
                 >
                   <Box sx={arrowStyle}>
-                    Stock {toggle.stock === 1 && <UpgradeIcon />}
-                    {toggle.stock !== 1 && <VerticalAlignBottomIcon />}
+                    Name {columns.name === 1 && <UpgradeIcon />}
+                    {columns.name !== 1 && <VerticalAlignBottomIcon />}
+                  </Box>
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={() => btnHoverStyle("red")}
+                  onClick={() => handleSort("stock", "text")}
+                >
+                  <Box sx={arrowStyle}>
+                    Stock {columns.stock === 1 && <UpgradeIcon />}
+                    {columns.stock !== 1 && <VerticalAlignBottomIcon />}
                   </Box>
                 </TableCell>
                 <TableCell align="center">Operation</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {products?.map((product, index) => (
+              {sortedData?.map((product, index) => (
                 <TableRow
                   key={product.name}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
