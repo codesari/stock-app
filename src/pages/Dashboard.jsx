@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import MenuListItems from "../components/MenuListItems";
 import useAuthCalls from "../hooks/useAuthCalls";
 import { useSelector } from "react-redux";
-import { Button } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -117,7 +117,7 @@ function Dashboard(props) {
           {drawer}
         </Drawer>
       </Box>
-      <Box
+      <Container
         component="main"
         sx={{
           flexGrow: 1,
@@ -128,7 +128,7 @@ function Dashboard(props) {
         <Toolbar />
         {/* sol menu ve navbar sabit orta icerik kismi(outlet) degisken  */}
         <Outlet />
-      </Box>
+      </Container>
     </Box>
   );
 }

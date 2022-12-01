@@ -1,7 +1,13 @@
 // import { axiosWithToken } from "../service/axiosInstance";
 // yukaridaki import u iptal ettik.çünkü axiosToken icin artik bir hook yazdık,token hook'tan gelecek service klasöründen değil
 import { useDispatch } from "react-redux";
-import { fetchFail, fetchStart, getSuccess } from "../features/stockSlice";
+import {
+  fetchFail,
+  fetchStart,
+  getSuccess,
+  getFetchThreeSuccess,
+  getAllStockSuccess,
+} from "../features/stockSlice";
 import { toastErrorNotify, toastSuccessNotify } from "../helper/ToastNotify";
 import useAxios from "./useAxios";
 
@@ -29,6 +35,50 @@ const useStockCalls = () => {
   const getProducts = () => getStockData("products");
   const getPurchases = () => getStockData("purchases");
 
+  const getFetchThree = async () => {
+    dispatch(fetchStart());
+    try {
+      const [products, categories, brands] = await Promise.all([
+        axiosWithToken.get("stock/products/"),
+        axiosWithToken.get("stock/categories/"),
+        axiosWithToken.get("stock/brands/"),
+      ]);
+
+      dispatch(
+        getFetchThreeSuccess([products?.data, categories?.data, brands?.data])
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(fetchFail());
+    }
+  };
+  const getAllStockData = async () => {
+    dispatch(fetchStart());
+    try {
+      const [purchases, firms, brands, sales, products, categories] =
+        await Promise.all([
+          axiosWithToken.get("/stock/purchases"),
+          axiosWithToken.get("/stock/firms"),
+          axiosWithToken.get("/stock/brands"),
+          axiosWithToken.get("/stock/sales"),
+          axiosWithToken.get("/stock/products"),
+          axiosWithToken.get("/stock/categories"),
+        ]);
+      dispatch(
+        getAllStockSuccess([
+          purchases.data,
+          firms.data,
+          brands.data,
+          sales.data,
+          products.data,
+          categories.data,
+        ])
+      );
+    } catch (err) {
+      dispatch(fetchFail());
+    }
+  };
+
   //! ----------- DELETE CALLS ---------------
 
   const deleteStockData = async (url, id) => {
@@ -44,6 +94,7 @@ const useStockCalls = () => {
 
   const deleteFirm = (id) => deleteStockData("firms", id);
   const deleteBrand = (id) => deleteStockData("brands", id);
+  const deleteProduct = (id) => deleteStockData("products", id);
 
   //! ----------- POST CALLS ---------------
   const postStockData = async (info, url) => {
@@ -87,6 +138,9 @@ const useStockCalls = () => {
     getCategories,
     getProducts,
     getPurchases,
+    deleteProduct,
+    getFetchThree,
+    getAllStockData,
   };
 };
 

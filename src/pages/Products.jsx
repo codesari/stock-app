@@ -14,25 +14,37 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { arrowStyle, btnHoverStyle, flex } from "../styles/globalStyle";
+import {
+  arrowStyle,
+  btnHoverStyle,
+  multiBoxStyle,
+} from "../styles/globalStyle";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import VerticalAlignBottomIcon from "@mui/icons-material/VerticalAlignBottom";
 import useSortColumn from "../hooks/useSortColumn";
 import { MultiSelectBox, MultiSelectBoxItem } from "@tremor/react";
 
 const Products = () => {
-  const { getBrands, getCategories, getProducts } = useStockCall();
+  const {
+    getBrands,
+    getCategories,
+    getProducts,
+    deleteProduct,
+    getFetchThree,
+  } = useStockCall();
   const { products, brands } = useSelector((state) => state.stock);
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({});
   const [btnName, setBtnName] = useState("Add New Firm");
-  const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
   useEffect(() => {
-    getBrands();
-    getCategories();
-    getProducts();
+    // getBrands();
+    // getCategories();
+    // getProducts();
+    //? bu üc tane fetch yerine tek bir tane fetch yapalim (promise all - performans tabanlı kod yazma)
+    getFetchThree();
   }, []);
 
   const columnObj = {
@@ -48,6 +60,15 @@ const Products = () => {
   const isBrandSelected = (item) =>
     selectedBrands.includes(item.brand) || selectedBrands.length === 0;
   //* secilen item varsa filtrele yoksa bos döndür
+
+  const isProductSelected = (item) =>
+    selectedProducts.includes(item.name) || selectedProducts.length === 0;
+  //* secilen item varsa filtrele yoksa bos döndür
+
+  //? products dizisinden secilmis brand'larin product name'lerini bir diziye saklar
+  const filteredProducts = products
+    ?.filter((item) => selectedBrands?.includes(item.brand))
+    .map((item) => item.name);
 
   //? Siralanacak local state (sutun verilerinin local state hali)
 
@@ -111,32 +132,30 @@ const Products = () => {
       >
         New Product
       </Button>
+      <Box sx={multiBoxStyle} mt={3}>
+        <MultiSelectBox
+          handleSelect={(item) => setSelectedBrands(item)}
+          placeholder="Select Brand"
+        >
+          {brands?.map((item) => (
+            <MultiSelectBoxItem
+              key={item.name}
+              value={item.name}
+              text={item.name}
+            />
+          ))}
+        </MultiSelectBox>
 
-      <MultiSelectBox
-        handleSelect={(item) => setSelectedBrands(item)}
-        placeholder="Select Brand"
-      >
-        {brands?.map((item) => (
-          <MultiSelectBoxItem
-            key={item.name}
-            value={item.name}
-            text={item.name}
-          />
-        ))}
-      </MultiSelectBox>
-
-      <MultiSelectBox
-        handleSelect={(item) => setSelectedBrands(item)}
-        placeholder="Select Product"
-      >
-        {brands?.map((item) => (
-          <MultiSelectBoxItem
-            key={item.name}
-            value={item.name}
-            text={item.name}
-          />
-        ))}
-      </MultiSelectBox>
+        <MultiSelectBox
+          handleSelect={(item) => setSelectedProducts(item)}
+          placeholder="Select Product"
+        >
+          {/* burada filtre icinde filtre yapmam lazım cünkü ilk sectigim branda göre ürün cıkarmasını istiyorum tüm ürünleri istemiyorum */}
+          {filteredProducts?.map((item) => (
+            <MultiSelectBoxItem key={item} value={item} text={item} />
+          ))}
+        </MultiSelectBox>
+      </Box>
 
       {/* <ProductModal /> */}
       {sortedData?.length > 0 && (
@@ -183,6 +202,7 @@ const Products = () => {
             <TableBody>
               {sortedData
                 ?.filter((item) => isBrandSelected(item))
+                .filter((item) => isProductSelected(item))
                 .map((product, index) => (
                   <TableRow
                     key={product.name}
@@ -196,7 +216,10 @@ const Products = () => {
                     <TableCell align="center">{product.brand}</TableCell>
                     <TableCell align="center">{product.name}</TableCell>
                     <TableCell align="center">{product.stock}</TableCell>
-                    <TableCell align="center">
+                    <TableCell
+                      align="center"
+                      onClick={() => deleteProduct(product.id)}
+                    >
                       <DeleteIcon sx={() => btnHoverStyle("red")} />
                     </TableCell>
                   </TableRow>

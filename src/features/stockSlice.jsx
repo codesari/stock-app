@@ -28,6 +28,21 @@ const stockSlice = createSlice({
       state[url] = data;
       //! her bir state icin getSuccess yazmaktansa url de hangi state geldiyse onun successi calisiyor
     },
+    getFetchThreeSuccess: (state, { payload }) => {
+      state.loading = false;
+      state.products = payload[0];
+      state.categories = payload[1];
+      state.brands = payload[2];
+    },
+    getAllStockSuccess: (state, { payload }) => {
+      state.loading = false;
+      state.purchases = payload[0];
+      state.firms = payload[1];
+      state.brands = payload[2];
+      state.sales = payload[3];
+      state.products = payload[4];
+      state.categories = payload[5];
+    },
 
     fetchFail: (state) => {
       state.loading = false;
@@ -36,5 +51,11 @@ const stockSlice = createSlice({
   },
 });
 
-export const { fetchStart, getSuccess, fetchFail } = stockSlice.actions;
+export const {
+  fetchStart,
+  getSuccess,
+  fetchFail,
+  getFetchThreeSuccess,
+  getAllStockSuccess,
+} = stockSlice.actions;
 export default stockSlice.reducer;

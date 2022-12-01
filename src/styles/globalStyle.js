@@ -43,3 +43,12 @@ export const arrowStyle = {
   display: "flex",
   justifyContent: "center",
 };
+
+export const multiBoxStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: 2,
+  //! RESPONSİVE (BREAKPOİNT)
+  flexDirection: { xs: "column", sm: "row" },
+};
