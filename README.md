@@ -1,1 +1,3 @@
-# stock-app
+# Demo
+
+![Stock App](stock.gif)
